@@ -1,0 +1,45 @@
+version: "3"
+services:
+  #MySQL Database image
+  Your_Database_Name_Here: # Change This
+    image: mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: #Database Root Password
+      MYSQL_DATABASE: #Database Name
+      MYSQL_USER: #Database User Name
+      MYSQL_PASSWORD: #Database Password
+    volumes:
+      - mysql:/var/lib/mysql
+
+  # PHP MyAdmin
+  phpmyadmin:
+    depends_on:
+      - #Your_Database_Name_Here (Needs to match your MySQL Database Name)
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - '8080:80'
+    environment:
+      PMA_HOST: #Your_Database_Name_Here (Needs to match your MySQL Database Name)
+      MYSQL_ROOT_PASSWORD: #Database Password
+
+  #WordPress image based on Apache
+  wordpress:
+    depends_on:
+      - #Your_Database_Name_Here (Needs to match your MySQL Database Name)
+    image: wordpress:latest
+    restart: always
+    ports:
+      - "8000:80"
+    environment:
+      WORDPRESS_DB_HOST: #Your_Database_Name_Here (Needs to match your MySQL Database Name)
+      WORDPRESS_DB_USER: #Database User Name
+      WORDPRESS_DB_PASSWORD: #Database Password
+      WORDPRESS_DB_NAME: #Database Name
+    volumes:
+      ["./:/var/www/html"]
+volumes:
+  mysql: {}
